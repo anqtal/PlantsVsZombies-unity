@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -177,7 +179,7 @@ namespace PvZReplica
                 {
                     string image = coin.Kind == AdventureCoinKind.Chocolate ? "chocolate.png" : "Present.png";
                     Texture2D gift = Texture(image);
-                    if (gift != null) DrawImage(image, new Rect(coinRect.center.x - gift.width * .5f, coinRect.center.y - gift.height * .5f, gift.width, gift.height));
+                    if (gift != null) DrawImage(image, new Rect(coinRect.center.x - HdTextures.Width(gift) * .5f, coinRect.center.y - HdTextures.Height(gift) * .5f, HdTextures.Width(gift), HdTextures.Height(gift)));
                     continue;
                 }
                 animations.DrawNative(coin.Kind == AdventureCoinKind.Diamond ? "Diamond" :
@@ -220,9 +222,12 @@ namespace PvZReplica
             {
                 string file = Path.Combine(root, relative.Replace('/', Path.DirectorySeparatorChar));
                 if (!File.Exists(file)) { textures[relative] = null; return; }
-                texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                if (!texture.LoadImage(File.ReadAllBytes(file))) { Destroy(texture); texture = null; }
-                else { texture.filterMode = FilterMode.Bilinear; texture.wrapMode = TextureWrapMode.Clamp; }
+                if (!HdTextures.TryLoad(file, out texture))
+                {
+                    texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                    if (!texture.LoadImage(File.ReadAllBytes(file))) { Destroy(texture); texture = null; }
+                    else { texture.filterMode = FilterMode.Bilinear; texture.wrapMode = TextureWrapMode.Clamp; }
+                }
                 textures[relative] = texture;
             }
             if (texture != null) GUI.DrawTexture(destination, texture, ScaleMode.ScaleToFit, true);

@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -83,8 +85,8 @@ namespace PvZReplica
                 Texture2D image = Texture(blit.Resource + (blit.Resource.StartsWith("background", StringComparison.Ordinal) ? ".jpg" : ".png"));
                 if (image == null) continue;
                 GUI.DrawTextureWithTexCoords(new Rect(blit.X, blit.Y, blit.Width, blit.Height), image,
-                    new Rect(blit.SourceX / (float)image.width, 1f - (blit.SourceY + blit.Height) / (float)image.height,
-                        blit.Width / (float)image.width, blit.Height / (float)image.height));
+                    new Rect(blit.SourceX / (float)HdTextures.Width(image), 1f - (blit.SourceY + blit.Height) / (float)HdTextures.Height(image),
+                        blit.Width / (float)HdTextures.Width(image), blit.Height / (float)HdTextures.Height(image)));
             }
         }
         private void DrawAdventureOpeningActors()

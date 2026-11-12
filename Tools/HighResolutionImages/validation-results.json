@@ -1,0 +1,57 @@
+{
+  "unityVersion": "6000.3.17f1",
+  "packImages": 1637,
+  "allOutputHashesVerified": true,
+  "logicalSizeChecks": "pass",
+  "animationBoundsAndTimingIdentical": 10,
+  "fontLayoutChecks": "pass",
+  "writingAlphaMaskRegression": "pass",
+  "fallbackChecks": "pass",
+  "macOSPlayerBuild": "pass",
+  "focusedPlayerRuns": [
+    {
+      "name": "hd-layout-final",
+      "seconds": 8.661,
+      "exit": 0,
+      "passed": true,
+      "screenshots": [
+        "selector.png",
+        "native-combat.png",
+        "help.png",
+        "options.png",
+        "almanac.png"
+      ]
+    },
+    {
+      "name": "original-layout-final",
+      "seconds": 4.646,
+      "exit": 0,
+      "passed": true,
+      "screenshots": [
+        "selector.png",
+        "native-combat.png",
+        "help.png",
+        "options.png",
+        "almanac.png"
+      ]
+    }
+  ],
+  "feedbackChecksPerMode": 19,
+  "feedbackPlayerRuns": [
+    {
+      "mode": "hd-feedback",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "mode": "original-feedback",
+      "passed": true,
+      "exit": 0
+    }
+  ],
+  "knownBaselineFailures": [
+    "Existing UI smoke expects an unavailable store notice; both original and HD fail that assertion.",
+    "Existing experimental level-one smoke reads image caches before startup completes; both modes fail that assertion."
+  ],
+  "otherPlatforms": "Windows, Linux, Android and iOS Player builds not run."
+}

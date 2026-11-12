@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -177,7 +179,7 @@ namespace PvZReplica
             int note = award.NativeType == 18 ? 4 : game.Adventure.Level.Number / 10;
             DrawImage(note % 2 == 0 ? "background2.jpg" : "background1.jpg", new Rect(-700, -300, 2800, 1200));
             Texture2D paper = Texture("ZombieNote.jpg");
-            if (paper != null) GUI.DrawTexture(new Rect(80, 80, paper.width, paper.height), paper);
+            if (paper != null) GUI.DrawTexture(new Rect(80, 80, HdTextures.Width(paper), HdTextures.Height(paper)), paper);
             string writing = note < 4 ? "ZombieNote" + (note + 1) + ".png" : "Credits_ZombieNote.png";
             Texture2D ink = Texture(writing);
             int x = note == 1 ? 133 : note == 2 ? 120 : note == 3 ? 102 : note == 4 ? 114 : 131;

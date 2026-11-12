@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,19 +22,19 @@ namespace PvZReplica.UI
             string bottom = tallBottom ? "dialog_bigbottom" : "dialog_bottom";
             Texture2D tl = texture("dialog_topleft.png"), tr = texture("dialog_topright.png"), bl = texture(bottom + "left.png"), br = texture(bottom + "right.png");
             if (tl == null || tr == null || bl == null || br == null) return;
-            float centerWidth = Math.Max(0, rect.width - tl.width - tr.width);
-            float middleHeight = Math.Max(0, rect.height - tr.height - bl.height);
-            Image(tl, new Rect(rect.x, rect.y, tl.width, tl.height));
-            Tile(texture("dialog_topmiddle.png"), new Rect(rect.x + tl.width, rect.y, centerWidth, tl.height));
-            Image(tr, new Rect(rect.xMax - tr.width, rect.y, tr.width, tr.height));
-            Tile(texture("dialog_centerleft.png"), new Rect(rect.x, rect.y + tr.height, tl.width, middleHeight));
-            Tile(texture("dialog_centermiddle.png"), new Rect(rect.x + tl.width, rect.y + tr.height, centerWidth, middleHeight));
-            Tile(texture("dialog_centerright.png"), new Rect(rect.xMax - tr.width, rect.y + tr.height, tr.width, middleHeight));
-            Image(bl, new Rect(rect.x, rect.yMax - bl.height, bl.width, bl.height));
-            Tile(texture(bottom + "middle.png"), new Rect(rect.x + bl.width, rect.yMax - bl.height, Math.Max(0, rect.width - bl.width - br.width), bl.height));
-            Image(br, new Rect(rect.xMax - br.width, rect.yMax - br.height, br.width, br.height));
+            float centerWidth = Math.Max(0, rect.width - HdTextures.Width(tl) - HdTextures.Width(tr));
+            float middleHeight = Math.Max(0, rect.height - HdTextures.Height(tr) - HdTextures.Height(bl));
+            Image(tl, new Rect(rect.x, rect.y, HdTextures.Width(tl), HdTextures.Height(tl)));
+            Tile(texture("dialog_topmiddle.png"), new Rect(rect.x + HdTextures.Width(tl), rect.y, centerWidth, HdTextures.Height(tl)));
+            Image(tr, new Rect(rect.xMax - HdTextures.Width(tr), rect.y, HdTextures.Width(tr), HdTextures.Height(tr)));
+            Tile(texture("dialog_centerleft.png"), new Rect(rect.x, rect.y + HdTextures.Height(tr), HdTextures.Width(tl), middleHeight));
+            Tile(texture("dialog_centermiddle.png"), new Rect(rect.x + HdTextures.Width(tl), rect.y + HdTextures.Height(tr), centerWidth, middleHeight));
+            Tile(texture("dialog_centerright.png"), new Rect(rect.xMax - HdTextures.Width(tr), rect.y + HdTextures.Height(tr), HdTextures.Width(tr), middleHeight));
+            Image(bl, new Rect(rect.x, rect.yMax - HdTextures.Height(bl), HdTextures.Width(bl), HdTextures.Height(bl)));
+            Tile(texture(bottom + "middle.png"), new Rect(rect.x + HdTextures.Width(bl), rect.yMax - HdTextures.Height(bl), Math.Max(0, rect.width - HdTextures.Width(bl) - HdTextures.Width(br)), HdTextures.Height(bl)));
+            Image(br, new Rect(rect.xMax - HdTextures.Width(br), rect.yMax - HdTextures.Height(br), HdTextures.Width(br), HdTextures.Height(br)));
             Texture2D cap = header ? texture("dialog_header.png") : null;
-            if (cap != null) Image(cap, new Rect(rect.center.x - cap.width / 2f, rect.y - 8, cap.width, cap.height));
+            if (cap != null) Image(cap, new Rect(rect.center.x - HdTextures.Width(cap) / 2f, rect.y - 8, HdTextures.Width(cap), HdTextures.Height(cap)));
         }
         // PC 0x452720/0x4532B0: preserve end caps, tile the original middle with a final source crop.
         // Pressed graphics shift X by1; caption shifts X/Y by1. Return value is caption displacement.
@@ -47,9 +49,9 @@ namespace PvZReplica.UI
             {
                 if (!enabled) GUI.color = new Color(old.r * .5f, old.g * .5f, old.b * .5f, old.a);
                 float x = rect.x + (pressed ? 1 : 0);
-                Image(left, new Rect(x, rect.y, left.width, left.height));
-                Tile(middle, new Rect(x + left.width, rect.y, Math.Max(0, rect.width - left.width - right.width), middle.height));
-                Image(right, new Rect(x + rect.width - right.width, rect.y, right.width, right.height));
+                Image(left, new Rect(x, rect.y, HdTextures.Width(left), HdTextures.Height(left)));
+                Tile(middle, new Rect(x + HdTextures.Width(left), rect.y, Math.Max(0, rect.width - HdTextures.Width(left) - HdTextures.Width(right)), HdTextures.Height(middle)));
+                Image(right, new Rect(x + rect.width - HdTextures.Width(right), rect.y, HdTextures.Width(right), HdTextures.Height(right)));
             }
             finally { GUI.color = old; }
             return pressed ? Vector2.one : Vector2.zero;
@@ -73,7 +75,7 @@ namespace PvZReplica.UI
         {
             Texture2D image = texture("editbox.png");
             if (image == null) return;
-            NineSlice(image, new Rect(field.x - 5, field.y - 6, field.width + 10, field.height + 12), image.width / 3, image.height / 3);
+            NineSlice(image, new Rect(field.x - 5, field.y - 6, field.width + 10, field.height + 12), HdTextures.Width(image) / 3, HdTextures.Height(image) / 3);
         }
         public static GUIStyle TransparentTextField(GUIStyle source)
         {
@@ -139,21 +141,21 @@ namespace PvZReplica.UI
         public static void Tile(Texture2D texture, Rect destination)
         {
             if (texture == null || destination.width <= 0 || destination.height <= 0) return;
-            for (float y = destination.y; y < destination.yMax; y += texture.height)
-            for (float x = destination.x; x < destination.xMax; x += texture.width)
+            for (float y = destination.y; y < destination.yMax; y += HdTextures.Height(texture))
+            for (float x = destination.x; x < destination.xMax; x += HdTextures.Width(texture))
             {
-                float w = Math.Min(texture.width, destination.xMax - x), h = Math.Min(texture.height, destination.yMax - y);
-                GUI.DrawTextureWithTexCoords(new Rect(x, y, w, h), texture, new Rect(0, 1 - h / texture.height, w / texture.width, h / texture.height), true);
+                float w = Math.Min(HdTextures.Width(texture), destination.xMax - x), h = Math.Min(HdTextures.Height(texture), destination.yMax - y);
+                GUI.DrawTextureWithTexCoords(new Rect(x, y, w, h), texture, new Rect(0, 1 - h / HdTextures.Height(texture), w / HdTextures.Width(texture), h / HdTextures.Height(texture)), true);
             }
         }
         public static void NineSlice(Texture2D image, Rect rect, int borderX, int borderY)
         {
-            float[] sx = { 0, borderX, image.width - borderX, image.width }, sy = { 0, borderY, image.height - borderY, image.height };
+            float[] sx = { 0, borderX, HdTextures.Width(image) - borderX, HdTextures.Width(image) }, sy = { 0, borderY, HdTextures.Height(image) - borderY, HdTextures.Height(image) };
             float bx = Math.Min(borderX, rect.width / 2), by = Math.Min(borderY, rect.height / 2);
             float[] dx = { rect.x, rect.x + bx, rect.xMax - bx, rect.xMax }, dy = { rect.y, rect.y + by, rect.yMax - by, rect.yMax };
             for (int row = 0; row < 3; row++) for (int col = 0; col < 3; col++)
                 GUI.DrawTextureWithTexCoords(new Rect(dx[col], dy[row], dx[col + 1] - dx[col], dy[row + 1] - dy[row]), image,
-                    new Rect(sx[col] / image.width, 1 - sy[row + 1] / image.height, (sx[col + 1] - sx[col]) / image.width, (sy[row + 1] - sy[row]) / image.height), true);
+                    new Rect(sx[col] / HdTextures.Width(image), 1 - sy[row + 1] / HdTextures.Height(image), (sx[col + 1] - sx[col]) / HdTextures.Width(image), (sy[row + 1] - sy[row]) / HdTextures.Height(image)), true);
         }
         public static void ReleaseFonts()
         { foreach (ImGuiBitmapFont font in fonts.Values) font.Dispose(); fonts.Clear(); failedFonts.Clear(); }

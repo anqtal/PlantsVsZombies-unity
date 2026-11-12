@@ -1,0 +1,97 @@
+{
+  "selectedModel": "waifu2x-cunet",
+  "scale": 4,
+  "noise": 0,
+  "fontScale": 2,
+  "device": "Apple M4, 10 GPU cores, 16 GB unified memory",
+  "sampleCount": 10,
+  "sourcePixels": 81113,
+  "timingIncludes": "process startup, decoding, inference and PNG encoding",
+  "qualitativeDecision": "Balance original shading and texture retention, small-shape clarity, edge quality and throughput; no ground-truth quality score.",
+  "measurements": [
+    {
+      "model": "waifu4-no",
+      "repeat": 1,
+      "seconds": 0.5386,
+      "exit": 0
+    },
+    {
+      "model": "waifu4-n0",
+      "repeat": 1,
+      "seconds": 0.5134,
+      "exit": 0
+    },
+    {
+      "model": "waifu4-n1",
+      "repeat": 1,
+      "seconds": 0.5247,
+      "exit": 0
+    },
+    {
+      "model": "waifu4-n3",
+      "repeat": 1,
+      "seconds": 0.5127,
+      "exit": 0
+    },
+    {
+      "model": "esrgan-anime6b",
+      "repeat": 1,
+      "seconds": 2.1342,
+      "exit": 0
+    },
+    {
+      "model": "esrgan-animev3",
+      "repeat": 1,
+      "seconds": 0.3536,
+      "exit": 0
+    },
+    {
+      "model": "cugan-se4-conservative",
+      "repeat": 1,
+      "seconds": 0.4453,
+      "exit": 0
+    },
+    {
+      "model": "cugan-se4-conservative",
+      "repeat": 2,
+      "seconds": 0.315,
+      "exit": 0
+    },
+    {
+      "model": "esrgan-animev3",
+      "repeat": 2,
+      "seconds": 0.2674,
+      "exit": 0
+    },
+    {
+      "model": "esrgan-anime6b",
+      "repeat": 2,
+      "seconds": 0.7705,
+      "exit": 0
+    },
+    {
+      "model": "waifu4-n3",
+      "repeat": 2,
+      "seconds": 0.4972,
+      "exit": 0
+    },
+    {
+      "model": "waifu4-n1",
+      "repeat": 2,
+      "seconds": 0.4934,
+      "exit": 0
+    },
+    {
+      "model": "waifu4-n0",
+      "repeat": 2,
+      "seconds": 0.4959,
+      "exit": 0
+    },
+    {
+      "model": "waifu4-no",
+      "repeat": 2,
+      "seconds": 0.5069,
+      "exit": 0
+    }
+  ]
+}

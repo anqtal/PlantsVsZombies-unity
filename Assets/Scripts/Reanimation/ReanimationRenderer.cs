@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -312,8 +314,8 @@ namespace PvZReplica.Reanimation
                     GUI.color = nativeCombatZombie == null ? new Color(originalColor.r, originalColor.g, originalColor.b, alpha) : NativeZombieTrackColor(group, alpha);
                     Texture2D image = imageOverride != null && TrackIs(track.Name, overrideTrack) ? imageOverride : from.Texture;
                     Texture2D nativeImage = NativeZombieImage(asset, track.Name, image);
-                    DrawTexturePart(nativeImage, nativeImage == image ? from.Texture.width : nativeImage.width,
-                        nativeImage == image ? from.Texture.height : nativeImage.height);
+                    DrawTexturePart(nativeImage, nativeImage == image ? HdTextures.Width(from.Texture) : HdTextures.Width(nativeImage),
+                        nativeImage == image ? HdTextures.Height(from.Texture) : HdTextures.Height(nativeImage));
                     drawn = true;
                 }
             }
@@ -702,7 +704,7 @@ namespace PvZReplica.Reanimation
                 SpriteMatrix = sprite;
                 GUI.color = new Color(originalColor.r, originalColor.g, originalColor.b,
                     originalColor.a * Math.Max(0f, Math.Min(1f, parentAlpha * frame.Alpha)));
-                DrawTexturePart(from.Texture, from.Texture.width, from.Texture.height);
+                DrawTexturePart(from.Texture, HdTextures.Width(from.Texture), HdTextures.Height(from.Texture));
                 drawn = true;
             }
             return drawn;
@@ -933,8 +935,8 @@ namespace PvZReplica.Reanimation
                 GUI.color = nativeCombatZombie == null ? new Color(tint.r, tint.g, tint.b, alpha) : NativeZombieTrackColor(group, alpha);
                 Texture2D image = imageOverride != null && TrackIs(track.Name, overrideTrack) ? imageOverride : from.Texture;
                 Texture2D nativeImage = NativeZombieImage(asset, track.Name, image);
-                DrawTexturePart(nativeImage, nativeImage == image ? from.Texture.width : nativeImage.width,
-                    nativeImage == image ? from.Texture.height : nativeImage.height);
+                DrawTexturePart(nativeImage, nativeImage == image ? HdTextures.Width(from.Texture) : HdTextures.Width(nativeImage),
+                    nativeImage == image ? HdTextures.Height(from.Texture) : HdTextures.Height(nativeImage));
                 drawn = true;
             }
             return drawn;
@@ -1057,6 +1059,11 @@ namespace PvZReplica.Reanimation
                 throw new FileNotFoundException("Image " + imageId + " was not found under " + (isReanim ? "reanim" : "images") + ".");
             Texture2D texture;
             if (textures.TryGetValue(path, out texture)) return texture;
+            if (HdTextures.TryLoad(path, out texture))
+            {
+                textures.Add(path, texture);
+                return texture;
+            }
             byte[] bytes = File.ReadAllBytes(path);
             texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             string maskPath = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + "_.png");
@@ -1176,7 +1183,7 @@ namespace PvZReplica.Reanimation
         private static void IncludeTextureBounds(Matrix4x4 m, Texture2D texture,
             ref float minX, ref float minY, ref float maxX, ref float maxY)
         {
-            float width = texture.width, height = texture.height;
+            float width = HdTextures.Width(texture), height = HdTextures.Height(texture);
             IncludePoint(m.m03, m.m13, ref minX, ref minY, ref maxX, ref maxY);
             IncludePoint(m.m03 + m.m00 * width, m.m13 + m.m10 * width, ref minX, ref minY, ref maxX, ref maxY);
             IncludePoint(m.m03 + m.m01 * height, m.m13 + m.m11 * height, ref minX, ref minY, ref maxX, ref maxY);

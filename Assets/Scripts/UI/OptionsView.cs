@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -549,12 +551,16 @@ namespace PvZReplica.UI
 
         private static Texture2D LoadMaskedBackground(string images)
         {
-            Texture2D color = LoadTexture(images, "options_menuback.jpg");
+            if (HdTextures.TryLoad(Path.Combine(images, "options_menuback.jpg"), out var highResolution))
+            {
+                return highResolution;
+            }
+            Texture2D color = LoadTexture(images, "options_menuback.jpg", false);
             Texture2D mask = null;
             Texture2D result = null;
             try
             {
-                mask = LoadTexture(images, "options_menuback_.png");
+                mask = LoadTexture(images, "options_menuback_.png", false);
                 if (color.width != mask.width || color.height != mask.height)
                     throw new InvalidDataException("The options background and alpha mask have different dimensions.");
                 Color32[] pixels = color.GetPixels32();
@@ -581,9 +587,13 @@ namespace PvZReplica.UI
             }
         }
 
-        private static Texture2D LoadTexture(string images, string name)
+        private static Texture2D LoadTexture(string images, string name, bool preferHighResolution = true)
         {
             string path = Path.Combine(images, name);
+            if (preferHighResolution && HdTextures.TryLoad(path, out var highResolution))
+            {
+                return highResolution;
+            }
             byte[] bytes = File.ReadAllBytes(path);
             Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             try

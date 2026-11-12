@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -646,6 +648,11 @@ namespace PvZReplica.UI
             texture = null;
             try
             {
+                if (HdTextures.TryLoad(path, out texture))
+                {
+                    textures[name] = texture;
+                    return texture;
+                }
                 if (File.Exists(path))
                 {
                     byte[] data = File.ReadAllBytes(path);

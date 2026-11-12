@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.IO;
 using System.Text;
@@ -49,6 +51,16 @@ namespace PvZReplica.UI.BitmapFonts
                 for (int i = 0; i < textures.Length; i++)
                 {
                     string pagePath = resourceRoot + "/Atlases/" + Path.GetFileNameWithoutExtension(data.Pages[i]);
+                    if (HdTextures.TryLoadResource(pagePath, out var highResolution))
+                    {
+                        if (HdTextures.Width(highResolution) != data.AtlasWidth || HdTextures.Height(highResolution) != data.AtlasHeight)
+                        {
+                            UnityEngine.Object.DestroyImmediate(highResolution);
+                            throw new FormatException("HD bitmap font source dimensions do not match: " + pagePath);
+                        }
+                        textures[i] = highResolution;
+                        continue;
+                    }
                     TextAsset image = Resources.Load<TextAsset>(pagePath);
                     if (image == null) throw new FileNotFoundException("Bitmap font atlas not found in Resources: " + pagePath);
                     var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);

@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,7 +43,11 @@ namespace PvZReplica
             for (int i = 0; i < originalLoadSproutAges.Length; i++) originalLoadSproutAges[i] = -1;
             foreach (string key in new[] { "title", "popcap", "logo", "grass", "dirt", "sodroll" })
             {
-                var texture = Resources.Load<Texture2D>("PvZLoading/" + key);
+                Texture2D texture;
+                if (!HdTextures.TryLoadResource("PvZLoading/" + key, out texture))
+                {
+                    texture = Resources.Load<Texture2D>("PvZLoading/" + key);
+                }
                 if (texture != null) { texture.filterMode = FilterMode.Bilinear; texture.wrapMode = TextureWrapMode.Clamp; originalTitleTextures[key] = texture; }
                 else Debug.LogWarning("Original title texture is missing: " + key);
             }
@@ -178,7 +184,7 @@ namespace PvZReplica
                         // Literal PC TodScaleRotateTransformMatrix, with its native image origin.
                         GUI.matrix = beforeCap * Matrix4x4.TRS(new Vector3(x,y,0),
                             Quaternion.Euler(0,0,-travel * 2f), new Vector3(capScale,capScale,1));
-                        GUI.DrawTexture(new Rect(-cap.width * .5f,-cap.height * .5f,cap.width,cap.height), cap, ScaleMode.StretchToFill, true);
+                        GUI.DrawTexture(new Rect(-HdTextures.Width(cap) * .5f,-HdTextures.Height(cap) * .5f,HdTextures.Width(cap),HdTextures.Height(cap)), cap, ScaleMode.StretchToFill, true);
                         GUI.matrix = beforeCap;
                     }
                 }
@@ -229,14 +235,24 @@ namespace PvZReplica
             if (!originalTitleTextures.TryGetValue("grass",out grass) || grass == null) return;
             int pixels = Math.Max(0, Math.Min(314, (int)width));
             if (pixels == 0) return;
-            GUI.DrawTextureWithTexCoords(new Rect(x,y,pixels,grass.height), grass,
-                new Rect(0,0,pixels / (float)grass.width,1), true);
+            GUI.DrawTextureWithTexCoords(new Rect(x,y,pixels,HdTextures.Height(grass)), grass,
+                new Rect(0,0,pixels / (float)HdTextures.Width(grass),1), true);
         }
         private void DrawOriginalTitleTexture(string key, Rect rect)
         { Texture2D image; if (originalTitleTextures.TryGetValue(key, out image) && image != null) GUI.DrawTexture(rect, image, ScaleMode.StretchToFill, true); }
         private void CompleteOriginalLoading(bool clicked)
         { if (!OriginalLoadingReady) return; originalLoadingActive = false; if (clicked) PlayPresentationSound("buttonclick"); }
         private void DisposeOriginalLoading()
-        { if (originalLoadingFont != null) { originalLoadingFont.Dispose(); originalLoadingFont = null; } originalTitleTextures.Clear(); }
+        {
+            if (originalLoadingFont != null) { originalLoadingFont.Dispose(); originalLoadingFont = null; }
+            foreach (var texture in originalTitleTextures.Values)
+            {
+                if (HdTextures.IsHighResolution(texture))
+                {
+                    Destroy(texture);
+                }
+            }
+            originalTitleTextures.Clear();
+        }
     }
 }

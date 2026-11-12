@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -224,7 +226,7 @@ namespace PvZReplica.Reanimation
             try { texture = LoadTexture(resource); }
             catch (FileNotFoundException) { return false; }
             if (texture == null || columns <= 0 || rows <= 0) return false;
-            float width = (float)texture.width / columns, height = (float)texture.height / rows;
+            float width = (float)HdTextures.Width(texture) / columns, height = (float)HdTextures.Height(texture) / rows;
             Matrix4x4 previous = SpriteMatrix;
             bool previousAdditive = nativeSpriteAdditive;
             nativeSpriteAdditive = additive;

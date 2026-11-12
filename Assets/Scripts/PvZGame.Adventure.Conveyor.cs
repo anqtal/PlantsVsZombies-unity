@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using UnityEngine;
 using PvZReplica.Adventure;
@@ -10,12 +12,12 @@ namespace PvZReplica
         private void DrawAdventureSeedBankBackground(Vector2 origin, int count)
         {
             Texture2D image = Texture("SeedBank.png"); if (image == null) return;
-            GUI.DrawTexture(new Rect(origin.x, origin.y, image.width, image.height), image);
+            GUI.DrawTexture(new Rect(origin.x, origin.y, HdTextures.Width(image), HdTextures.Height(image)), image);
             int extra = AdventureSeedSlotLayout.BackgroundExtra(count);
             if (extra <= 0) return;
             // PC 0x49F100 copies the original right-hand strip; it does not stretch the panel.
-            GUI.DrawTextureWithTexCoords(new Rect(origin.x + image.width - 12, origin.y, extra + 12, image.height), image,
-                new Rect((image.width - extra - 12f) / image.width, 0, (extra + 12f) / image.width, 1));
+            GUI.DrawTextureWithTexCoords(new Rect(origin.x + HdTextures.Width(image) - 12, origin.y, extra + 12, HdTextures.Height(image)), image,
+                new Rect((HdTextures.Width(image) - extra - 12f) / HdTextures.Width(image), 0, (extra + 12f) / HdTextures.Width(image), 1));
         }
         private void DrawAdventureConveyorBackground()
         {

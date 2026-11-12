@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.IO;
 using System.Text;
@@ -84,8 +86,8 @@ namespace PvZReplica.UI
             {
                 GUI.color = Color.white;
                 Image(new Rect(-700f, -300f, 2800f, 1200f), lawn);
-                Image(new Rect(80f, 80f, paper.width, paper.height), paper);
-                Image(new Rect(131f, 132f, writing.width, writing.height), writing);
+                Image(new Rect(80f, 80f, HdTextures.Width(paper), HdTextures.Height(paper)), paper);
+                Image(new Rect(131f, 132f, HdTextures.Width(writing), HdTextures.Height(writing)), writing);
 
                 float offset = IsReturnPressed ? 1f : 0f;
                 Rect buttonRect = new Rect(ReturnBounds.x + offset, ReturnBounds.y + offset,
@@ -206,13 +208,17 @@ namespace PvZReplica.UI
 
         private static Texture2D LoadMaskedTexture(string images, string colorName, string maskName)
         {
+            if (HdTextures.TryLoad(Path.Combine(images, colorName), out var highResolution))
+            {
+                return highResolution;
+            }
             Texture2D color = null;
             Texture2D mask = null;
             Texture2D result = null;
             try
             {
-                color = LoadTexture(images, colorName);
-                mask = LoadTexture(images, maskName);
+                color = LoadTexture(images, colorName, false);
+                mask = LoadTexture(images, maskName, false);
                 if (color.width != mask.width || color.height != mask.height)
                     throw new InvalidDataException("Image and alpha mask dimensions differ: " + colorName);
                 Color32[] colors = color.GetPixels32();
@@ -237,9 +243,13 @@ namespace PvZReplica.UI
             }
         }
 
-        private static Texture2D LoadTexture(string images, string name)
+        private static Texture2D LoadTexture(string images, string name, bool preferHighResolution = true)
         {
             string path = Path.Combine(images, name);
+            if (preferHighResolution && HdTextures.TryLoad(path, out var highResolution))
+            {
+                return highResolution;
+            }
             byte[] bytes = File.ReadAllBytes(path);
             Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             try

@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -222,6 +224,11 @@ namespace PvZReplica.UI
                 string basePath = Path.Combine(root, relativePath.Replace('/', Path.DirectorySeparatorChar));
                 bool hasPng = File.Exists(basePath + ".png");
                 string path = basePath + (hasPng ? ".png" : ".jpg");
+                if (HdTextures.TryLoad(path, out texture))
+                {
+                    textures.Add(relativePath, texture);
+                    return texture;
+                }
                 if (!File.Exists(path)) throw new FileNotFoundException("Image not found", path);
                 texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                 texture.hideFlags = HideFlags.HideAndDontSave;

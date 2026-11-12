@@ -63,6 +63,10 @@ extracted_assets/
 *.pidb
 *.pdb
 *.mdb
+
+# Python asset-preparation caches
+__pycache__/
+*.py[cod]
 *.opendb
 *.VC.db
 

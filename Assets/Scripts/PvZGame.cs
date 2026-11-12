@@ -1,3 +1,5 @@
+#nullable enable
+using HdTextures = PlantsVsZombies.Rendering.HighResolutionTextures;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1033,6 +1035,11 @@ namespace PvZReplica
             Texture2D texture;
             if (textures.TryGetValue(name, out texture)) return texture;
             string path = Path.Combine(root, "images", name);
+            if (HdTextures.TryLoad(path, out texture))
+            {
+                textures[name] = texture;
+                return texture;
+            }
             if (!File.Exists(path)) { textures[name] = null; return null; }
             texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             if (!texture.LoadImage(File.ReadAllBytes(path))) { Destroy(texture); texture = null; }
